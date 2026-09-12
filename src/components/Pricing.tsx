@@ -4,6 +4,28 @@ import { useState } from "react";
 
 export default function Pricing() {
   const [annual, setAnnual] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  async function handleCheckout() {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: annual ? "annual" : "monthly" }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const plans = [
     {
@@ -14,6 +36,7 @@ export default function Pricing() {
       cta: "Start free scan",
       ctaStyle:
         "border border-white/10 bg-transparent text-white hover:bg-white/5",
+      href: "#scan",
       features: [
         "Full broker scan (197+ sites)",
         "See which brokers have your data",
@@ -32,9 +55,10 @@ export default function Pricing() {
       price: annual ? "$6.99" : "$9.99",
       period: "/mo",
       desc: "Remove your data and keep it gone",
-      cta: "Remove my data",
+      cta: loading ? "Loading..." : "Remove my data",
       ctaStyle: "bg-accent text-ground hover:bg-accent-dim",
       popular: true,
+      isCheckout: true,
       features: [
         "Everything in Free",
         "Automated opt-out requests",
@@ -120,12 +144,22 @@ export default function Pricing() {
                 )}
               </div>
 
-              <a
-                href="#scan"
-                className={`mb-8 block rounded-lg px-6 py-3 text-center text-sm font-semibold transition-colors ${plan.ctaStyle}`}
-              >
-                {plan.cta}
-              </a>
+              {plan.isCheckout ? (
+                <button
+                  onClick={handleCheckout}
+                  disabled={loading}
+                  className={`mb-8 block w-full rounded-lg px-6 py-3 text-center text-sm font-semibold transition-colors disabled:opacity-50 ${plan.ctaStyle}`}
+                >
+                  {plan.cta}
+                </button>
+              ) : (
+                <a
+                  href={plan.href || "#scan"}
+                  className={`mb-8 block rounded-lg px-6 py-3 text-center text-sm font-semibold transition-colors ${plan.ctaStyle}`}
+                >
+                  {plan.cta}
+                </a>
+              )}
 
               <ul className="space-y-3">
                 {plan.features.map((f) => (
