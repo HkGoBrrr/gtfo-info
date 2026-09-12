@@ -18,7 +18,7 @@ export default function Pricing() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Something went wrong. Please try again.");
+        alert(data.detail || data.error || "Something went wrong. Please try again.");
       }
     } catch {
       alert("Something went wrong. Please try again.");
@@ -52,7 +52,7 @@ export default function Pricing() {
     },
     {
       name: "Pro",
-      price: annual ? "$6.99" : "$9.99",
+      price: annual ? "$5.79" : "$6.99",
       period: "/mo",
       desc: "Remove your data and keep it gone",
       cta: loading ? "Loading..." : "Remove my data",
@@ -139,7 +139,7 @@ export default function Pricing() {
                 )}
                 {annual && plan.name === "Pro" && (
                   <p className="mt-1 text-xs text-white/30">
-                    $83.88 billed annually
+                    $69.42 billed annually
                   </p>
                 )}
               </div>

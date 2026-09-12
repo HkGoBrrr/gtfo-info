@@ -1,24 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!);
-}
-
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
       return NextResponse.json(
-        { error: "Stripe is not configured yet" },
+        { error: "Stripe is not configured yet", detail: "STRIPE_SECRET_KEY is missing" },
         { status: 500 }
       );
     }
 
-    const stripe = getStripe();
+    const stripe = new Stripe(key);
     const body = await request.json();
-    const { plan } = body; // "monthly" or "annual"
+    const { plan } = body;
 
     const priceId =
       plan === "annual"
@@ -27,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     if (!priceId) {
       return NextResponse.json(
-        { error: "Price not configured" },
+        { error: "Price not configured", detail: `Missing price ID for ${plan}` },
         { status: 500 }
       );
     }
@@ -47,10 +44,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (err) {
-    console.error("Stripe checkout error:", err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Stripe checkout error:", message);
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { error: "Failed to create checkout session", detail: message },
       { status: 500 }
     );
   }
