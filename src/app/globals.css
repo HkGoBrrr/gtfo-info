@@ -1,0 +1,89 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  --color-ground: #0a0a0a;
+  --color-ground-50: #141418;
+  --color-ground-100: #1a1a20;
+  --color-ground-200: #222228;
+
+  --color-accent: #00e5ff;
+  --color-accent-dim: #00b8cc;
+  --color-accent-glow: rgba(0, 229, 255, 0.15);
+
+  --color-warn: #ff9100;
+  --color-warn-dim: #cc7400;
+
+  --color-danger: #ff3d3d;
+  --color-danger-dim: #cc3030;
+
+  --color-safe: #00e676;
+  --color-safe-dim: #00b85c;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0a0a0a;
+  color: #fafafa;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(0, 229, 255, 0.3);
+  color: #fff;
+}
+
+.scan-input-glow {
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.3),
+    0 0 20px rgba(0, 229, 255, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.scan-input-glow:focus-within {
+  box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.6),
+    0 0 40px rgba(0, 229, 255, 0.15);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #00e5ff 0%, #00e676 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.grid-bg {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+@keyframes scan-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-scan-pulse {
+  animation: scan-pulse 1.5s ease-in-out infinite;
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
