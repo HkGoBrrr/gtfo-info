@@ -49,6 +49,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Auto-trigger opt-out requests in the background
+    const origin = request.nextUrl.origin;
+    fetch(`${origin}/api/optout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customerId }),
+    }).catch((err) => console.error("Background opt-out trigger failed:", err));
+
     return NextResponse.json({ success: true, customerId });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
