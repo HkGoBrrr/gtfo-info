@@ -64,6 +64,29 @@ function ScanResultsInner() {
     runScan();
   }, [runScan]);
 
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  async function handleCheckout() {
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: "monthly" }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.detail || "Something went wrong.");
+      }
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setCheckoutLoading(false);
+    }
+  }
+
   if (loading) {
     return <LoadingState phase={phases[scanPhase]} progress={(scanPhase + 1) / phases.length} />;
   }
@@ -204,12 +227,13 @@ function ScanResultsInner() {
             Upgrade to Pro and we&apos;ll send opt-out requests to every broker that has your
             information, then monitor and re-remove when they re-list you.
           </p>
-          <a
-            href="/#pricing"
-            className="inline-block rounded-lg bg-accent px-8 py-3 text-sm font-semibold text-ground transition-colors hover:bg-accent-dim"
+          <button
+            onClick={handleCheckout}
+            disabled={checkoutLoading}
+            className="inline-block rounded-lg bg-accent px-8 py-3 text-sm font-semibold text-ground transition-colors hover:bg-accent-dim disabled:opacity-50"
           >
-            Remove my data — $6.99/mo
-          </a>
+            {checkoutLoading ? "Loading..." : "Remove my data — $6.99/mo"}
+          </button>
         </div>
       </div>
     </div>
